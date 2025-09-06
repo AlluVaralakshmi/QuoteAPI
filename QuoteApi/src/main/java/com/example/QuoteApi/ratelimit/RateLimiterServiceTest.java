@@ -15,11 +15,11 @@ public class RateLimiterServiceTest {
     void setUp() {
         rateLimiter = new RateLimiterService();
 
-        // set custom test limits (simulate @Value injection)
+       
         rateLimiter = new RateLimiterService() {{
-            quoteLimit = 5;       // 5 requests per minute
+            quoteLimit = 5;      
             quoteWindowMs = 60000;
-            testLimit = 3;        // 3 requests per 30s
+            testLimit = 3;        
             testWindowMs = 30000;
         }};
     }
@@ -38,12 +38,12 @@ public class RateLimiterServiceTest {
     void testExceedLimit() {
         String ip = "127.0.0.1";
 
-        // 5 allowed
+       
         for (int i = 0; i < 5; i++) {
             rateLimiter.tryConsume(ip, "/api/quote");
         }
 
-        // 6th should fail
+      
         RateLimiterService.RateLimitResponse res = rateLimiter.tryConsume(ip, "/api/quote");
         assertFalse(res.allowed, "6th request should be blocked");
         assertTrue(res.retryAfterMs > 0, "Retry-After should be greater than 0");
@@ -53,15 +53,15 @@ public class RateLimiterServiceTest {
     void testSeparateEndpointsHaveSeparateLimits() {
         String ip = "127.0.0.1";
 
-        // Consume 3 requests for /api/test
+      
         for (int i = 0; i < 3; i++) {
             assertTrue(rateLimiter.tryConsume(ip, "/api/test").allowed);
         }
 
-        // 4th should fail
+      
         assertFalse(rateLimiter.tryConsume(ip, "/api/test").allowed);
 
-        // But /api/quote should still work (5 requests allowed)
+       
         for (int i = 0; i < 5; i++) {
             assertTrue(rateLimiter.tryConsume(ip, "/api/quote").allowed);
         }
