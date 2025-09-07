@@ -25,7 +25,7 @@ public class RequestLoggingFilter extends HttpFilter {
 		String path = request.getRequestURI();
 
 
-		// continue -- we will log status after chain
+		
 		chain.doFilter(request, response);
 
 
